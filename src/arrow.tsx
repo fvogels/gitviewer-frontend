@@ -12,6 +12,8 @@ export function Arrow(props: { from: Vector, to: Vector })
   const base = to.sub(direction.mul(headLength));
   const left = base.add(direction.rotateLeft().mul(headWidth / 2));
   const right = base.add(direction.rotateRight().mul(headWidth / 2));
+  const stroke = 'white';
+  const strokeWidth = 2;
 
   return (
     <React.Fragment>
@@ -19,20 +21,20 @@ export function Arrow(props: { from: Vector, to: Vector })
             y1={from.y}
             x2={to.x}
             y2={to.y}
-            stroke='black'
-            strokeWidth={2} />
+            stroke={stroke}
+            strokeWidth={strokeWidth} />
       <line x1={left.x}
             y1={left.y}
             x2={to.x}
             y2={to.y}
-            stroke='black'
-            strokeWidth={2} />
+            stroke={stroke}
+            strokeWidth={strokeWidth} />
       <line x1={right.x}
             y1={right.y}
             x2={to.x}
             y2={to.y}
-            stroke='black'
-            strokeWidth={2} />
+            stroke={stroke}
+            strokeWidth={strokeWidth} />
     </React.Fragment>
   );
 }
