@@ -53,37 +53,77 @@ function Commit({selected, position, onClick} : CommitProps) : JSX.Element
 }
 
 
+const HeaderBoxContainer = styled.div<{orientation: 'horizontal' | 'vertical'}>`
+  display: flex;
+  flex-direction: ${props => props.orientation === 'horizontal' ? 'row' : 'column'};
+  justify-content: flex-start;
+  align-items: stretch;
+  width: 100%;
+  height: 100%;
+  border: 1px solid white;
+`;
+
+const HeaderBoxCaption = styled.div<{orientation: 'horizontal' | 'vertical'}>`
+  ${props => props.orientation === 'vertical' ? 'writing-mode: vertical-lr; transform: rotate(180deg);' : ''}
+  text-align: center;
+  font-size: 1.5em;
+  background: #222;
+  font-variant: small-caps;
+  padding: 0.5em;
+`;
+
+
+function HeaderBox(props : { caption: string, children ?: React.ReactNode, captionLocation : 'north' | 'west' }) : JSX.Element
+{
+  const orientation = props.captionLocation === 'north' ? 'vertical' : 'horizontal';
+  const captionOrientation = props.captionLocation === 'north' ? 'horizontal' : 'vertical';
+
+  return (
+    <HeaderBoxContainer orientation={orientation}>
+      <HeaderBoxCaption orientation={captionOrientation}>{props.caption}</HeaderBoxCaption>
+      {props.children}
+    </HeaderBoxContainer>
+  );
+}
+
+
 function WorkingAreaView() : JSX.Element
 {
   return (
-    <p>Working Area</p>
+    <HeaderBox caption='Working Area' captionLocation='west'>
+      <p>Hello world</p>
+    </HeaderBox>
   );
 }
 
 function StagingAreaView() : JSX.Element
 {
   return (
-    <p>Staging Area</p>
+    <HeaderBox caption='Staging Area' captionLocation='west'>
+      <p>Hello world</p>
+    </HeaderBox>
   );
 }
 
 function RepositoryView() : JSX.Element
 {
   return (
-    <div>
+    <HeaderBox caption='Repository' captionLocation='west'>
       <svg width="100%">
         <Commit selected={false} position={new Vector(100, 100)} onClick={() => {}} />
         <Commit selected={false} position={new Vector(200, 100)} onClick={() => {}} />
         <Arrow from={new Vector(200, 100)} to={new Vector(100, 100)} />
       </svg>
-    </div>
+    </HeaderBox>
   );
 }
 
 function PropertiesView() : JSX.Element
 {
   return (
-    <p>Properties</p>
+    <HeaderBox caption='Properties' captionLocation='north'>
+      <p>Properties</p>
+    </HeaderBox>
   );
 }
 
