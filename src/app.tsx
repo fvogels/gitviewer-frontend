@@ -1,6 +1,6 @@
 import { Arrow } from 'arrow';
 import { HeaderBox } from 'components/headerbox';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import styled from 'styled-components';
 import { Vector } from 'vector';
@@ -54,22 +54,94 @@ function Commit({selected, position, onClick} : CommitProps) : JSX.Element
 }
 
 
+
+const FileList = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  justify-content: flex-start;
+  flex-flow: column wrap;
+`;
+
+const File = styled.span`
+  font-family: monospace;
+  padding: 0.25em;
+  margin: 0.25em;
+  background: #448;
+`;
+
 function WorkingAreaView() : JSX.Element
 {
+  const [files, setFiles] = React.useState<string[][]>([]);
+
+  useEffect(() => {
+    async function fetchData()
+    {
+      const rawData = await fetch('/api/v1/working-area');
+      const data = await rawData.json();
+      setFiles(data['files']);
+    }
+
+    fetchData().catch(console.error);
+  }, []);
+
   return (
     <HeaderBox caption='Working Area' captionLocation='west'>
-      <p>Hello world</p>
+      <FileList>
+        {files.map(renderFile)}
+      </FileList>
     </HeaderBox>
   );
+
+
+  function renderFile(pathParts : string[]) : JSX.Element
+  {
+    const path = pathParts.join('/');
+
+    return (
+      <File key={path}>
+        {path}
+      </File>
+    );
+  }
 }
 
 function StagingAreaView() : JSX.Element
 {
-  return (
-    <HeaderBox caption='Staging Area' captionLocation='west'>
-      <p>Hello world</p>
-    </HeaderBox>
-  );
+  const [files, setFiles] = React.useState<string[][]>([]);
+
+  useEffect(() => {
+    async function fetchData()
+    {
+      const rawData = await fetch('/api/v1/staging-area');
+      const data = await rawData.json();
+      setFiles(data['files']);
+    }
+
+    fetchData().catch(console.error);
+  }, []);
+
+
+   return (
+      <HeaderBox caption='Staging Area' captionLocation='west'>
+        <FileList>
+          {files.map(renderFile)}
+        </FileList>
+      </HeaderBox>
+    );
+
+
+    function renderFile(pathParts : string[]) : JSX.Element
+    {
+      const path = pathParts.join('/');
+
+      return (
+        <File key={path}>
+          {path}
+        </File>
+      );
+    }
 }
 
 function RepositoryView() : JSX.Element
