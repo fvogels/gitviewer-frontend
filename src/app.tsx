@@ -4,8 +4,8 @@ import React, { useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import styled from 'styled-components';
 import { Vector } from 'vector';
-import { FileList, File } from 'components/filelist';
 import { WorkingAreaView } from 'components/working-area-view';
+import { StagingAreaView } from 'components/staging-area-view';
 
 
 const VerticalSplit = styled.div`
@@ -55,43 +55,6 @@ function Commit({selected, position, onClick} : CommitProps) : JSX.Element
   );
 }
 
-
-function StagingAreaView() : JSX.Element
-{
-  const [files, setFiles] = React.useState<string[][]>([]);
-
-  useEffect(() => {
-    async function fetchData()
-    {
-      const rawData = await fetch('/api/v1/staging-area');
-      const data = await rawData.json();
-      setFiles(data['files']);
-    }
-
-    fetchData().catch(console.error);
-  }, []);
-
-
-   return (
-      <HeaderBox caption='Staging Area' captionLocation='west'>
-        <FileList>
-          {files.map(renderFile)}
-        </FileList>
-      </HeaderBox>
-    );
-
-
-    function renderFile(pathParts : string[]) : JSX.Element
-    {
-      const path = pathParts.join('/');
-
-      return (
-        <File key={path}>
-          {path}
-        </File>
-      );
-    }
-}
 
 function RepositoryView() : JSX.Element
 {
