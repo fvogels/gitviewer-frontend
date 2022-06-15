@@ -8,6 +8,10 @@ import { WorkingAreaView } from 'components/working-area-view';
 import { StagingAreaView } from 'components/staging-area-view';
 
 
+type SelectionSetter = (selection: string) => void;
+
+const SelectionContext = React.createContext<{setSelection: SelectionSetter, selection: string}>({setSelection: () => {}, selection: ''});
+
 const VerticalSplit = styled.div`
   display: flex;
   flex-direction: column;
@@ -38,21 +42,29 @@ const WidthPanel = styled.div<{width: string}>`
 
 
 type CommitProps = {
-  selected: boolean,
+  hash: string,
   position: Vector,
-  onClick: () => void,
 };
 
-function Commit({selected, position, onClick} : CommitProps) : JSX.Element
+function Commit({position, hash} : CommitProps) : JSX.Element
 {
+  const {selection, setSelection} = React.useContext(SelectionContext);
+  const selectionId = `commit:${hash}`;
+  const selected = selection === selectionId;
   const fill = selected ? '#FAA' : '#AAA';
   const strokeWidth = selected ? 3 : 1;
 
   return (
     <>
-      <circle cx={position.x} cy={position.y} r={20} fill={fill} stroke='black' strokeWidth={strokeWidth} onClick={onClick} />
+      <circle id={hash} cx={position.x} cy={position.y} r={20} fill={fill} stroke='black' strokeWidth={strokeWidth} onClick={onClick} />
     </>
   );
+
+
+  function onClick()
+  {
+    setSelection(selectionId);
+  }
 }
 
 
@@ -84,7 +96,7 @@ function RepositoryView() : JSX.Element
       <HeaderBox caption='Repository' captionLocation='west'>
         <svg width="100%">
           {
-            masterCommits.map((commit, i) => <Commit selected={false} position={new Vector(100 * (i + 1), 100)} onClick={() => {}} />)
+            masterCommits.map((commit, i) => <Commit hash={commit} position={new Vector(100 * (i + 1), 100)} />)
           }
         </svg>
       </HeaderBox>
@@ -108,25 +120,29 @@ function PropertiesView() : JSX.Element
 
 function App()
 {
+  const [selection, setSelection] = React.useState<string>('');
+
   return (
-    <HorizontalSplit>
-      <WidthPanel width='70%'>
-        <VerticalSplit>
-          <HeightPanel height='50%'>
-            <RepositoryView />
-          </HeightPanel>
-          <HeightPanel height='25%'>
-            <StagingAreaView />
-          </HeightPanel>
-          <HeightPanel height='25%'>
-            <WorkingAreaView />
-          </HeightPanel>
-        </VerticalSplit>
-      </WidthPanel>
-      <WidthPanel width='30%'>
-        <PropertiesView />
-      </WidthPanel>
-    </HorizontalSplit>
+    <SelectionContext.Provider value={{selection, setSelection}}>
+      <HorizontalSplit>
+        <WidthPanel width='70%'>
+          <VerticalSplit>
+            <HeightPanel height='50%'>
+              <RepositoryView />
+            </HeightPanel>
+            <HeightPanel height='25%'>
+              <StagingAreaView />
+            </HeightPanel>
+            <HeightPanel height='25%'>
+              <WorkingAreaView />
+            </HeightPanel>
+          </VerticalSplit>
+        </WidthPanel>
+        <WidthPanel width='30%'>
+          <PropertiesView />
+        </WidthPanel>
+      </HorizontalSplit>
+    </SelectionContext.Provider>
   );
 }
 
