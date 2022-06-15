@@ -58,15 +58,42 @@ function Commit({selected, position, onClick} : CommitProps) : JSX.Element
 
 function RepositoryView() : JSX.Element
 {
-  return (
-    <HeaderBox caption='Repository' captionLocation='west'>
-      <svg width="100%">
-        <Commit selected={false} position={new Vector(100, 100)} onClick={() => {}} />
-        <Commit selected={false} position={new Vector(200, 100)} onClick={() => {}} />
-        <Arrow from={new Vector(200, 100)} to={new Vector(100, 100)} />
-      </svg>
-    </HeaderBox>
-  );
+  const [data, setData] = React.useState<any>(undefined);
+
+  useEffect(() => {
+    async function fetchData()
+    {
+      const rawData = await fetch('/api/v1/repository');
+      const data = await rawData.json();
+      setData(data);
+    }
+
+    fetchData().catch(console.error);
+  }, []);
+
+  if ( data )
+  {
+    const commits = data['commits'];
+    const masterCommits: string[] = [ data['branches']['master'] ];
+    while ( commits[masterCommits[0]].length > 0 )
+    {
+      masterCommits.unshift(commits[masterCommits[0]][0]);
+    }
+
+    return (
+      <HeaderBox caption='Repository' captionLocation='west'>
+        <svg width="100%">
+          {
+            masterCommits.map((commit, i) => <Commit selected={false} position={new Vector(100 * (i + 1), 100)} onClick={() => {}} />)
+          }
+        </svg>
+      </HeaderBox>
+    );
+  }
+  else
+  {
+    return <></>;
+  }
 }
 
 function PropertiesView() : JSX.Element
@@ -81,8 +108,6 @@ function PropertiesView() : JSX.Element
 
 function App()
 {
-  const [selectedCommit, setSelectedCommit] = React.useState<number>(0);
-
   return (
     <HorizontalSplit>
       <WidthPanel width='70%'>
