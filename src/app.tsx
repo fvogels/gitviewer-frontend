@@ -1,4 +1,3 @@
-import { Arrow } from 'arrow';
 import { HeaderBox } from 'components/headerbox';
 import React, { useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -7,6 +6,7 @@ import { Vector } from 'vector';
 import { WorkingAreaView } from 'components/working-area-view';
 import { StagingAreaView } from 'components/staging-area-view';
 import { SelectionContext } from 'selection-context';
+import { CommitView } from 'components/commit-view';
 
 
 const VerticalSplit = styled.div`
@@ -38,74 +38,6 @@ const WidthPanel = styled.div<{width: string}>`
 `;
 
 
-type CommitProps = {
-  hash: string,
-  position: Vector,
-};
-
-
-function CommitPropertyView(props: {hash: string}) : JSX.Element
-{
-  const [data, setData] = React.useState<any>(undefined);
-
-  useEffect(() => {
-    async function fetchData()
-    {
-          const url = `/api/v1/repository/commits/${props.hash}`;
-          console.log(url);
-          const rawData = await fetch(url);
-          const data = await rawData.json();
-          setData(data);
-    }
-
-    fetchData().catch(console.error);
-  }, []);
-
-  if (data)
-  {
-    return (
-      <HeaderBox caption='Properties' captionLocation='north'>
-        <table>
-          <tbody>
-            {Object.keys(data).map(key => <tr key={key}><td>{key}</td><td>{data[key]}</td></tr>)}
-          </tbody>
-        </table>
-      </HeaderBox>
-    );
-  }
-  else
-  {
-    return <></>;
-  }
-}
-
-
-function Commit({position, hash} : CommitProps) : JSX.Element
-{
-  const {selectionId, setSelection} = React.useContext(SelectionContext);
-  const mySelectionId = `commit:${hash}`;
-  const selected = selectionId === mySelectionId;
-  const fill = selected ? '#FAA' : '#AAA';
-  const strokeWidth = selected ? 3 : 1;
-
-  return (
-    <>
-      <circle id={hash} cx={position.x} cy={position.y} r={20} fill={fill} stroke='black' strokeWidth={strokeWidth} onClick={onClick} />
-    </>
-  );
-
-
-  function onClick()
-  {
-    const viewer = (
-      <CommitPropertyView hash={hash} />
-    );
-
-    setSelection(mySelectionId, viewer);
-  }
-}
-
-
 function RepositoryView() : JSX.Element
 {
   const [data, setData] = React.useState<any>(undefined);
@@ -134,7 +66,7 @@ function RepositoryView() : JSX.Element
       <HeaderBox caption='Repository' captionLocation='west'>
         <svg width="100%">
           {
-            masterCommits.map((commit, i) => <Commit hash={commit} position={new Vector(100 * (i + 1), 100)} />)
+            masterCommits.map((commit, i) => <CommitView hash={commit} position={new Vector(100 * (i + 1), 100)} />)
           }
         </svg>
       </HeaderBox>
