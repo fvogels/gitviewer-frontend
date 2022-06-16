@@ -5,10 +5,10 @@ import { SelectionContext } from 'selection-context';
 
 
 
-function StagingAreaPropertyView() : JSX.Element
+function StagingAreaPropertyView(props: { pathParts: string[] }) : JSX.Element
 {
     return (
-        <span>Staging Area Property View!</span>
+        <span>Staging Area Property View! {props.pathParts}</span>
     );
 }
 
@@ -51,7 +51,7 @@ export function StagingAreaView() : JSX.Element
 
         function onClick()
         {
-            setSelection(mySelectionId, <StagingAreaPropertyView />);
+            setSelection(mySelectionId, <StagingAreaPropertyView pathParts={pathParts} />);
         }
     }
 }

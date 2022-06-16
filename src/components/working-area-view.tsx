@@ -4,10 +4,10 @@ import { FileList, File } from 'components/filelist';
 import { SelectionContext } from 'selection-context';
 
 
-function WorkingAreaPropertyView() : JSX.Element
+function WorkingAreaPropertyView(props: { pathParts: string[] }) : JSX.Element
 {
     return (
-        <span>Working Area Property View!</span>
+        <span>Working Area Property View! {props.pathParts}</span>
     );
 }
 
@@ -49,7 +49,7 @@ export function WorkingAreaView(): JSX.Element
 
         function onClick()
         {
-            setSelection(mySelectionId, <WorkingAreaPropertyView />);
+            setSelection(mySelectionId, <WorkingAreaPropertyView pathParts={pathParts} />);
         }
     }
 }
