@@ -44,11 +44,39 @@ type CommitProps = {
 };
 
 
-function CommitPropertyView() : JSX.Element
+function CommitPropertyView(props: {hash: string}) : JSX.Element
 {
-  return (
-    <span>Commit Property Viewer!</span>
-  );
+  const [data, setData] = React.useState<any>(undefined);
+
+  useEffect(() => {
+    async function fetchData()
+    {
+          const url = `/api/v1/repository/commits/${props.hash}`;
+          console.log(url);
+          const rawData = await fetch(url);
+          const data = await rawData.json();
+          setData(data);
+    }
+
+    fetchData().catch(console.error);
+  }, []);
+
+  if (data)
+  {
+    return (
+      <HeaderBox caption='Properties' captionLocation='north'>
+        <table>
+          <tbody>
+            {Object.keys(data).map(key => <tr key={key}><td>{key}</td><td>{data[key]}</td></tr>)}
+          </tbody>
+        </table>
+      </HeaderBox>
+    );
+  }
+  else
+  {
+    return <></>;
+  }
 }
 
 
@@ -70,7 +98,7 @@ function Commit({position, hash} : CommitProps) : JSX.Element
   function onClick()
   {
     const viewer = (
-      <CommitPropertyView />
+      <CommitPropertyView hash={hash} />
     );
 
     setSelection(mySelectionId, viewer);
