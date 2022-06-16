@@ -10,9 +10,18 @@ export const FileList = styled.div`
   flex-flow: column wrap;
 `;
 
-export const File = styled.span`
+const FileContainer = styled.span`
   font-family: monospace;
   padding: 0.25em;
   margin: 0.25em;
   background: #448;
 `;
+
+export function File(props: {path: string}) : JSX.Element
+{
+  return (
+    <FileContainer>
+      {props.path}
+    </FileContainer>
+  );
+}

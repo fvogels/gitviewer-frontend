@@ -31,9 +31,7 @@ export function WorkingAreaView(): JSX.Element
         const path = pathParts.join('/');
 
         return (
-            <File key={path}>
-                {path}
-            </File>
+            <File key={path} path={path} />
         );
     }
 }

@@ -6,11 +6,8 @@ import styled from 'styled-components';
 import { Vector } from 'vector';
 import { WorkingAreaView } from 'components/working-area-view';
 import { StagingAreaView } from 'components/staging-area-view';
+import { SelectionContext } from 'selection-context';
 
-
-type SelectionSetter = (selection: string) => void;
-
-const SelectionContext = React.createContext<{setSelection: SelectionSetter, selection: string}>({setSelection: () => {}, selection: ''});
 
 const VerticalSplit = styled.div`
   display: flex;
@@ -108,13 +105,44 @@ function RepositoryView() : JSX.Element
   }
 }
 
-function PropertiesView() : JSX.Element
+function PropertiesView(props: {selectionId: string}) : JSX.Element
 {
-  return (
-    <HeaderBox caption='Properties' captionLocation='north'>
-      <p>Properties</p>
-    </HeaderBox>
-  );
+  const [data, setData] = React.useState<any>(undefined);
+
+  useEffect(() => {
+    async function fetchData()
+    {
+        const commitPrefix = 'commit:';
+
+        if ( props.selectionId.startsWith(commitPrefix) )
+        {
+            const url = `/api/v1/repository/commits/${props.selectionId.substring(commitPrefix.length)}`;
+            console.log(url);
+            const rawData = await fetch(url);
+            const data = await rawData.json();
+            setData(data);
+        }
+    }
+
+    fetchData().catch(console.error);
+  }, [props.selectionId]);
+
+  if (data)
+  {
+    return (
+      <HeaderBox caption='Properties' captionLocation='north'>
+        <table>
+          <tbody>
+            {Object.keys(data).map(key => <tr key={key}><td>{key}</td><td>{data[key]}</td></tr>)}
+          </tbody>
+        </table>
+      </HeaderBox>
+    );
+  }
+  else
+  {
+    return <></>;
+  }
 }
 
 
@@ -139,7 +167,7 @@ function App()
           </VerticalSplit>
         </WidthPanel>
         <WidthPanel width='30%'>
-          <PropertiesView />
+          <PropertiesView selectionId={selection} />
         </WidthPanel>
       </HorizontalSplit>
     </SelectionContext.Provider>
