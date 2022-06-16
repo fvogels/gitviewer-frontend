@@ -10,22 +10,23 @@ export const FileList = styled.div`
   flex-flow: column wrap;
 `;
 
-const FileContainer = styled.span`
+const FileContainer = styled.span<{isSelected: boolean}>`
   font-family: monospace;
   padding: 0.25em;
   margin: 0.25em;
-  background: #448;
+  background: ${props => props.isSelected ? '#668' : '#448'};
 `;
 
 type FileProps = {
   path: string,
   onClick ?: () => void,
+  isSelected ?: boolean,
 }
 
-export function File({path, onClick}: FileProps) : JSX.Element
+export function File({path, onClick, isSelected = false}: FileProps) : JSX.Element
 {
   return (
-    <FileContainer onClick={onClick}>
+    <FileContainer onClick={onClick} isSelected={isSelected}>
       {path}
     </FileContainer>
   );
