@@ -4,10 +4,17 @@ import { FileList, File } from 'components/filelist';
 import { SelectionContext } from 'selection-context';
 
 
+function WorkingAreaPropertyView() : JSX.Element
+{
+    return (
+        <span>Working Area Property View!</span>
+    );
+}
+
 export function WorkingAreaView(): JSX.Element
 {
     const [files, setFiles] = React.useState<string[][]>([]);
-    const { selection, setSelection } = React.useContext(SelectionContext);
+    const { selectionId, setSelection } = React.useContext(SelectionContext);
 
 
     useEffect(() => {
@@ -32,8 +39,8 @@ export function WorkingAreaView(): JSX.Element
     function renderFile(pathParts: string[]): JSX.Element
     {
         const path = pathParts.join('/');
-        const selectionId = `working-area:${path}`;
-        const isSelected = selection === selectionId;
+        const mySelectionId = `working-area:${path}`;
+        const isSelected = selectionId === mySelectionId;
 
         return (
             <File key={path} path={path} onClick={onClick} isSelected={isSelected} />
@@ -42,7 +49,7 @@ export function WorkingAreaView(): JSX.Element
 
         function onClick()
         {
-            setSelection(selectionId);
+            setSelection(mySelectionId, <WorkingAreaPropertyView />);
         }
     }
 }

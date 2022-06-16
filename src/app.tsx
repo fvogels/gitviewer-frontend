@@ -43,11 +43,20 @@ type CommitProps = {
   position: Vector,
 };
 
+
+function CommitPropertyView() : JSX.Element
+{
+  return (
+    <span>Commit Property Viewer!</span>
+  );
+}
+
+
 function Commit({position, hash} : CommitProps) : JSX.Element
 {
-  const {selection, setSelection} = React.useContext(SelectionContext);
-  const selectionId = `commit:${hash}`;
-  const selected = selection === selectionId;
+  const {selectionId, setSelection} = React.useContext(SelectionContext);
+  const mySelectionId = `commit:${hash}`;
+  const selected = selectionId === mySelectionId;
   const fill = selected ? '#FAA' : '#AAA';
   const strokeWidth = selected ? 3 : 1;
 
@@ -60,7 +69,11 @@ function Commit({position, hash} : CommitProps) : JSX.Element
 
   function onClick()
   {
-    setSelection(selectionId);
+    const viewer = (
+      <CommitPropertyView />
+    );
+
+    setSelection(mySelectionId, viewer);
   }
 }
 
@@ -148,10 +161,11 @@ function PropertiesView(props: {selectionId: string}) : JSX.Element
 
 function App()
 {
-  const [selection, setSelection] = React.useState<string>('');
+  const [selectionId, setSelectionId] = React.useState<string>('');
+  const [propertyView, setPropertyView] = React.useState<JSX.Element>(<></>);
 
   return (
-    <SelectionContext.Provider value={{selection, setSelection}}>
+    <SelectionContext.Provider value={{selectionId, setSelection, propertyView}}>
       <HorizontalSplit>
         <WidthPanel width='70%'>
           <VerticalSplit>
@@ -167,11 +181,18 @@ function App()
           </VerticalSplit>
         </WidthPanel>
         <WidthPanel width='30%'>
-          <PropertiesView selectionId={selection} />
+          {propertyView}
         </WidthPanel>
       </HorizontalSplit>
     </SelectionContext.Provider>
   );
+
+
+  function setSelection(selectionId: string, propertyView: JSX.Element)
+  {
+    setSelectionId(selectionId);
+    setPropertyView(propertyView);
+  }
 }
 
 

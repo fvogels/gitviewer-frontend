@@ -4,10 +4,19 @@ import { FileList, File } from 'components/filelist';
 import { SelectionContext } from 'selection-context';
 
 
+
+function StagingAreaPropertyView() : JSX.Element
+{
+    return (
+        <span>Staging Area Property View!</span>
+    );
+}
+
+
 export function StagingAreaView() : JSX.Element
 {
     const [files, setFiles] = React.useState<string[][]>([]);
-    const { selection, setSelection } = React.useContext(SelectionContext);
+    const { selectionId, setSelection } = React.useContext(SelectionContext);
 
     useEffect(() => {
         async function fetchData()
@@ -32,8 +41,8 @@ export function StagingAreaView() : JSX.Element
     function renderFile(pathParts : string[]) : JSX.Element
     {
         const path = pathParts.join('/');
-        const selectionId = `staging-area:${path}`;
-        const isSelected = selection === selectionId;
+        const mySelectionId = `staging-area:${path}`;
+        const isSelected = selectionId === mySelectionId;
 
         return (
             <File key={path} path={path} onClick={onClick} isSelected={isSelected} />
@@ -42,7 +51,7 @@ export function StagingAreaView() : JSX.Element
 
         function onClick()
         {
-            setSelection(selectionId);
+            setSelection(mySelectionId, <StagingAreaPropertyView />);
         }
     }
 }
