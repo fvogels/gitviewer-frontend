@@ -78,44 +78,15 @@ function RepositoryView() : JSX.Element
   }
 }
 
-function PropertiesView(props: {selectionId: string}) : JSX.Element
+function PropertiesView() : JSX.Element
 {
-  const [data, setData] = React.useState<any>(undefined);
+  const { propertyView } = React.useContext(SelectionContext);
 
-  useEffect(() => {
-    async function fetchData()
-    {
-        const commitPrefix = 'commit:';
-
-        if ( props.selectionId.startsWith(commitPrefix) )
-        {
-            const url = `/api/v1/repository/commits/${props.selectionId.substring(commitPrefix.length)}`;
-            console.log(url);
-            const rawData = await fetch(url);
-            const data = await rawData.json();
-            setData(data);
-        }
-    }
-
-    fetchData().catch(console.error);
-  }, [props.selectionId]);
-
-  if (data)
-  {
-    return (
-      <HeaderBox caption='Properties' captionLocation='north'>
-        <table>
-          <tbody>
-            {Object.keys(data).map(key => <tr key={key}><td>{key}</td><td>{data[key]}</td></tr>)}
-          </tbody>
-        </table>
-      </HeaderBox>
-    );
-  }
-  else
-  {
-    return <></>;
-  }
+  return (
+    <HeaderBox caption='Properties' captionLocation='north'>
+      {propertyView}
+    </HeaderBox>
+  );
 }
 
 
@@ -141,7 +112,7 @@ function App()
           </VerticalSplit>
         </WidthPanel>
         <WidthPanel width='30%'>
-          {propertyView}
+          <PropertiesView />
         </WidthPanel>
       </HorizontalSplit>
     </SelectionContext.Provider>

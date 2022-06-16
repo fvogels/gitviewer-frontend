@@ -23,13 +23,11 @@ function CommitPropertyView(props: { hash: string }): JSX.Element
 
     if (data) {
         return (
-            <HeaderBox caption='Properties' captionLocation='north'>
-                <table>
-                    <tbody>
-                        {Object.keys(data).map(key => <tr key={key}><td>{key}</td><td>{data[key]}</td></tr>)}
-                    </tbody>
-                </table>
-            </HeaderBox>
+            <table>
+                <tbody>
+                    {Object.keys(data).map(key => <tr key={key}><td>{key}</td><td>{data[key]}</td></tr>)}
+                </tbody>
+            </table>
         );
     }
     else {
