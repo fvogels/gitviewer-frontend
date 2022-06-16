@@ -17,11 +17,16 @@ const FileContainer = styled.span`
   background: #448;
 `;
 
-export function File(props: {path: string}) : JSX.Element
+type FileProps = {
+  path: string,
+  onClick ?: () => void,
+}
+
+export function File({path, onClick}: FileProps) : JSX.Element
 {
   return (
-    <FileContainer>
-      {props.path}
+    <FileContainer onClick={onClick}>
+      {path}
     </FileContainer>
   );
 }
