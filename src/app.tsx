@@ -65,6 +65,12 @@ class Theme implements DefaultTheme
     get unselectedFileColor() { return this.unselectedColor; }
 
     commitRadius = 16;
+
+    labelWidth = 100;
+
+    labelHeight = 28;
+
+    branchLabelColor = '#FAA';
 }
 
 

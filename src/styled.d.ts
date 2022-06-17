@@ -15,5 +15,11 @@ declare module 'styled-components'
     unselectedFileColor: string;
 
     commitRadius: number;
+
+    labelWidth: number;
+
+    labelHeight: number;
+
+    branchLabelColor: string;
   }
 }

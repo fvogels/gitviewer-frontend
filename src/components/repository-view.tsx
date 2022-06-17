@@ -4,6 +4,7 @@ import styled, { ThemeContext } from 'styled-components';
 import { Vector } from 'vector';
 import { CommitView } from 'components/commit-view';
 import { Arrow } from 'components/arrow';
+import { Label } from './label';
 
 
 
@@ -137,6 +138,7 @@ export function RepositoryView(): JSX.Element
     if (data) {
 
         const commitPositions: { [key: string]: Vector } = determinePositions(data);
+
         const commitCircles = Object.keys(data.commits).map(commit => {
             if ( commit in commitPositions ) {
                 return <CommitView key={commit} hash={commit} position={commitPositions[commit]} />
@@ -146,6 +148,7 @@ export function RepositoryView(): JSX.Element
                 return <></>;
             }
         });
+
         const commitArrows = Object.keys(data.commits).flatMap(childCommit => {
             const childPosition = commitPositions[childCommit];
 
@@ -161,11 +164,18 @@ export function RepositoryView(): JSX.Element
             });
         });
 
+        const labels = Object.entries(data.branches).map(([branch, hash]) => {
+            return (
+                <Label key={branch} position={commitPositions[hash]} caption={branch} dy={theme.commitRadius + 10} />
+            );
+        });
+
         return (
             <HeaderBox caption='Repository' captionLocation='west'>
                 <svg width="100%">
                     {commitCircles}
                     {commitArrows}
+                    {labels}
                 </svg>
             </HeaderBox>
         );
