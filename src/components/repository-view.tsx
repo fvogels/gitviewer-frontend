@@ -73,38 +73,33 @@ function determineCommitPositions(data: RawData): { [key: string]: Vector }
     const todo = Object.keys(commits).filter(c => !gridPositions[c]);
     let counter = 0;
 
-    console.log(`todo: ${todo.join(' ')}`);
-
     let current : string | undefined;
     while ( current = todo.shift() ) {
         const parents = commits[current];
 
-        if ( parents.length === 1 )
+        const [ parent ] = parents;
+
+        if ( gridPositions[parent] )
         {
-            const [ parent ] = parents;
+            let position = gridPositions[parent].add(new Vector(1, 0));
 
-            if ( gridPositions[parent] )
+            while ( gridUsage.get(position, false) )
             {
-                let position = gridPositions[parent].add(new Vector(1, 0));
-
-                while ( gridUsage.get(position, false) )
-                {
-                    position = position.add(new Vector(0, 1));
-                }
-
-                gridPositions[current] = position;
-                gridUsage.set(position, true);
-                counter = 0;
+                position = position.add(new Vector(0, 1));
             }
-            else
-            {
-                todo.push(current);
-                counter++;
 
-                if ( counter === todo.length )
-                {
-                    throw new Error(`Got stuck while placing commits`);
-                }
+            gridPositions[current] = position;
+            gridUsage.set(position, true);
+            counter = 0;
+        }
+        else
+        {
+            todo.push(current);
+            counter++;
+
+            if ( counter === todo.length )
+            {
+                throw new Error(`Got stuck while placing commits`);
             }
         }
     }
@@ -139,8 +134,20 @@ function createCommitArrows(data: RawData, commitPositions: { [key: string]: Vec
     return Object.keys(data.commits).flatMap(childCommit => {
         const childPosition = commitPositions[childCommit];
 
+        if ( !childPosition )
+        {
+            console.log(commitPositions);
+            throw new Error(`Couldn't find position for commit with hash ${childCommit}`);
+        }
+
         return data.commits[childCommit].map(parentCommit => {
             const parentPosition = commitPositions[parentCommit];
+
+            if ( !parentPosition )
+            {
+                throw new Error(`Couldn't find position for commit with hash ${parentCommit}`);
+            }
+
             const key=`${childCommit}:${parentCommit}`;
 
             return (
@@ -153,22 +160,20 @@ function createCommitArrows(data: RawData, commitPositions: { [key: string]: Vec
 
 
     function connect(from: Vector, to: Vector, radius: number) : JSX.Element
-        {
-            const correction = from.to(to).normalize().mul(radius);
-            const correctedFrom = from.add(correction);
-            const correctedTo = to.sub(correction);
+    {
+        const correction = from.to(to).normalize().mul(radius);
+        const correctedFrom = from.add(correction);
+        const correctedTo = to.sub(correction);
 
-            return (
-                <Arrow from={correctedFrom} to={correctedTo} />
-            );
-        }
+        return (
+            <Arrow from={correctedFrom} to={correctedTo} />
+        );
+    }
 }
 
 
 function createLabels(data: RawData, commitPositions: { [key: string]: Vector }, theme: DefaultTheme): JSX.Element[]
 {
-    console.log(data);
-
     const branchLabels = Object.entries(data.branches).map(([branch, hash]) => {
         return (
             <Label key={branch} position={commitPositions[hash]} caption={branch} dy={theme.commitRadius + 5} />
