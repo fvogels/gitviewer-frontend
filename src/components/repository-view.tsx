@@ -227,6 +227,8 @@ export function RepositoryView(): JSX.Element
 {
     const theme = React.useContext(ThemeContext);
     const [data, setData] = React.useState<RawData | undefined>(undefined);
+    const [anchor, setAnchor] = React.useState<Vector | undefined>(undefined);
+    const [offset, setOffset] = React.useState<Vector>(new Vector(0, 0));
 
     useEffect(() => {
         async function fetchData() {
@@ -246,15 +248,42 @@ export function RepositoryView(): JSX.Element
 
         return (
             <HeaderBox caption='Repository' captionLocation='west'>
-                <svg width="100%">
-                    {commitCircles}
-                    {commitArrows}
-                    {labels}
+                <svg width="100%" onMouseMove={onMouseMove} onMouseDown={onMouseDown}>
+                    <g transform={`translate(${offset.x}, ${offset.y})`}>
+                        {commitCircles}
+                        {commitArrows}
+                        {labels}
+                    </g>
                 </svg>
             </HeaderBox>
         );
     }
     else {
         return <></>;
+    }
+
+
+    function onMouseDown(e : React.MouseEvent<SVGSVGElement>)
+    {
+        const leftButtonDown = (e.button === 0);
+
+        if ( leftButtonDown )
+        {
+            setAnchor(new Vector(e.clientX, e.clientY));
+        }
+    }
+
+    function onMouseMove(e : React.MouseEvent<SVGSVGElement>)
+    {
+        const leftButtonDown = (e.buttons & 1) !== 0;
+
+        if ( leftButtonDown && anchor )
+        {
+            const clickPosition = new Vector(e.clientX, e.clientY);
+            const delta = clickPosition.sub(anchor);
+            const newOffset = offset.add(delta);
+            setOffset(newOffset);
+            setAnchor(clickPosition);
+        }
     }
 }
