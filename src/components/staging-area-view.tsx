@@ -4,12 +4,34 @@ import { FileList, File } from 'components/filelist';
 import { SelectionContext } from 'selection-context';
 
 
-
 function StagingAreaPropertyView(props: { pathParts: string[] }) : JSX.Element
 {
-    return (
-        <span>Staging Area Property View! {props.pathParts}</span>
-    );
+    const [data, setData] = React.useState<any>(undefined);
+
+    useEffect(() => {
+        async function fetchData() {
+            const url = `/api/v1/staging-area/${props.pathParts.join('/')}`;
+            console.log(url);
+            const rawData = await fetch(url);
+            const data = await rawData.json();
+            setData(data);
+        }
+
+        fetchData().catch(console.error);
+    }, [props.pathParts]);
+
+    if (data) {
+        return (
+            <table>
+                <tbody>
+                    {Object.keys(data).map(key => <tr key={key}><td>{key}</td><td>{data[key]}</td></tr>)}
+                </tbody>
+            </table>
+        );
+    }
+    else {
+        return <></>;
+    }
 }
 
 

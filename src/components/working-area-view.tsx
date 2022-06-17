@@ -35,6 +35,7 @@ function WorkingAreaPropertyView(props: { pathParts: string[] }) : JSX.Element
     }
 }
 
+
 export function WorkingAreaView(): JSX.Element
 {
     const [files, setFiles] = React.useState<string[][]>([]);
