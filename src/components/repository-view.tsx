@@ -120,6 +120,20 @@ function determineCommitPositions(data: RawData): { [key: string]: Vector }
 }
 
 
+function createCommitCircles(data: RawData, commitPositions: { [key: string]: Vector }): JSX.Element[]
+{
+    return Object.keys(data.commits).map(commit => {
+        if ( commit in commitPositions ) {
+            return <CommitView key={commit} hash={commit} position={commitPositions[commit]} />
+        }
+        else
+        {
+            return <></>;
+        }
+    });
+}
+
+
 export function RepositoryView(): JSX.Element
 {
     const theme = React.useContext(ThemeContext);
@@ -138,16 +152,7 @@ export function RepositoryView(): JSX.Element
     if (data) {
 
         const commitPositions: { [key: string]: Vector } = determineCommitPositions(data);
-
-        const commitCircles = Object.keys(data.commits).map(commit => {
-            if ( commit in commitPositions ) {
-                return <CommitView key={commit} hash={commit} position={commitPositions[commit]} />
-            }
-            else
-            {
-                return <></>;
-            }
-        });
+        const commitCircles = createCommitCircles(data, commitPositions);
 
         const commitArrows = Object.keys(data.commits).flatMap(childCommit => {
             const childPosition = commitPositions[childCommit];

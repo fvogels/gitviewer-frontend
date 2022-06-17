@@ -70,7 +70,7 @@ class Theme implements DefaultTheme
 
     labelHeight = 28;
 
-    branchLabelColor = '#FAA';
+    branchLabelColor = '#A44';
 }
 
 
