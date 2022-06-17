@@ -134,6 +134,37 @@ function createCommitCircles(data: RawData, commitPositions: { [key: string]: Ve
 }
 
 
+function createCommitArrows(data: RawData, commitPositions: { [key: string]: Vector }, radius: number): JSX.Element[]
+{
+    return Object.keys(data.commits).flatMap(childCommit => {
+        const childPosition = commitPositions[childCommit];
+
+        return data.commits[childCommit].map(parentCommit => {
+            const parentPosition = commitPositions[parentCommit];
+            const key=`${childCommit}:${parentCommit}`;
+
+            return (
+                <React.Fragment key={key}>
+                    {connect(childPosition, parentPosition, radius)}
+                </React.Fragment>
+            );
+        });
+    });
+
+
+    function connect(from: Vector, to: Vector, radius: number) : JSX.Element
+        {
+            const correction = from.to(to).normalize().mul(radius);
+            const correctedFrom = from.add(correction);
+            const correctedTo = to.sub(correction);
+
+            return (
+                <Arrow from={correctedFrom} to={correctedTo} />
+            );
+        }
+}
+
+
 export function RepositoryView(): JSX.Element
 {
     const theme = React.useContext(ThemeContext);
@@ -153,21 +184,7 @@ export function RepositoryView(): JSX.Element
 
         const commitPositions: { [key: string]: Vector } = determineCommitPositions(data);
         const commitCircles = createCommitCircles(data, commitPositions);
-
-        const commitArrows = Object.keys(data.commits).flatMap(childCommit => {
-            const childPosition = commitPositions[childCommit];
-
-            return data.commits[childCommit].map(parentCommit => {
-                const parentPosition = commitPositions[parentCommit];
-                const key=`${childCommit}:${parentCommit}`;
-
-                return (
-                    <React.Fragment key={key}>
-                        {connect(childPosition, parentPosition, theme.commitRadius)}
-                    </React.Fragment>
-                );
-            });
-        });
+        const commitArrows = createCommitArrows(data, commitPositions, theme.commitRadius);
 
         const labels = Object.entries(data.branches).map(([branch, hash]) => {
             return (
@@ -184,18 +201,6 @@ export function RepositoryView(): JSX.Element
                 </svg>
             </HeaderBox>
         );
-
-
-        function connect(from: Vector, to: Vector, radius: number) : JSX.Element
-        {
-            const correction = from.to(to).normalize().mul(radius);
-            const correctedFrom = from.add(correction);
-            const correctedTo = to.sub(correction);
-
-            return (
-                <Arrow from={correctedFrom} to={correctedTo} />
-            );
-        }
     }
     else {
         return <></>;
