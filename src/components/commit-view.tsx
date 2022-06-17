@@ -5,9 +5,53 @@ import styled, { ThemeContext } from 'styled-components';
 
 
 
+type RawData = {
+    author: string,
+    message: string,
+    parents: string[],
+    date: string,
+};
+
+
+const PropertyTableContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: stretch;
+`;
+
+function PropertyTable(props : {children: React.ReactNode}) : JSX.Element
+{
+    return (
+        <PropertyTableContainer>
+            {props.children}
+        </PropertyTableContainer>
+    );
+}
+
+
+const PropertyEntry = styled.div`
+    display: flex;
+    flex-direction: column;
+`;
+
+const PropertyKey = styled.div`
+    background: ${props => props.theme.propertyHeaderColor};
+    color: ${props => props.theme.propertyHeaderTextColor};
+    padding: 0.1em 0.5em;
+    font-variant: small-caps;
+    user-select: none;
+`;
+
+const PropertyValue = styled.div`
+    padding: 0.1em 0.2em;
+    margin-bottom: 0.5em;
+`;
+
+
 function CommitPropertyView(props: { hash: string }): JSX.Element
 {
-    const [data, setData] = React.useState<any>(undefined);
+    const [data, setData] = React.useState<RawData | undefined>(undefined);
 
     useEffect(() => {
         async function fetchData() {
@@ -22,11 +66,24 @@ function CommitPropertyView(props: { hash: string }): JSX.Element
 
     if (data) {
         return (
-            <table>
-                <tbody>
-                    {Object.keys(data).map(key => <tr key={key}><td>{key}</td><td>{data[key]}</td></tr>)}
-                </tbody>
-            </table>
+            <PropertyTable>
+                <PropertyEntry>
+                    <PropertyKey>Author</PropertyKey>
+                    <PropertyValue>{data.author}</PropertyValue>
+                </PropertyEntry>
+                <PropertyEntry>
+                    <PropertyKey>Date</PropertyKey>
+                    <PropertyValue>{data.date}</PropertyValue>
+                </PropertyEntry>
+                <PropertyEntry>
+                    <PropertyKey>Message</PropertyKey>
+                    <PropertyValue>{data.message}</PropertyValue>
+                </PropertyEntry>
+                <PropertyEntry>
+                    <PropertyKey>#Parents</PropertyKey>
+                    <PropertyValue>{data.parents.length}</PropertyValue>
+                </PropertyEntry>
+            </PropertyTable>
         );
     }
     else {

@@ -21,5 +21,9 @@ declare module 'styled-components'
     labelHeight: number;
 
     branchLabelColor: string;
+
+    propertyHeaderColor: string;
+
+    propertyHeaderTextColor : string;
   }
 }

@@ -71,6 +71,10 @@ class Theme implements DefaultTheme
     labelHeight = 20;
 
     branchLabelColor = '#A44';
+
+    propertyHeaderColor = '#AAA';
+
+    propertyHeaderTextColor = 'black';
 }
 
 
