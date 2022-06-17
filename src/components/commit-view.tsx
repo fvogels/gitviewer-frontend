@@ -1,7 +1,7 @@
-import { HeaderBox } from 'components/headerbox';
 import React, { useEffect } from 'react';
 import { Vector } from 'vector';
 import { SelectionContext } from 'selection-context';
+import styled, { ThemeContext } from 'styled-components';
 
 
 
@@ -18,7 +18,7 @@ function CommitPropertyView(props: { hash: string }): JSX.Element
         }
 
         fetchData().catch(console.error);
-    }, []);
+    }, [props.hash]);
 
     if (data) {
         return (
@@ -43,15 +43,17 @@ type CommitProps = {
 
 export function CommitView({ position, hash }: CommitProps): JSX.Element
 {
+    const theme = React.useContext(ThemeContext);
     const { selectionId, setSelection } = React.useContext(SelectionContext);
     const mySelectionId = `commit:${hash}`;
     const selected = selectionId === mySelectionId;
-    const fill = selected ? '#FAA' : '#AAA';
+    const fill = selected ? theme.selectedCommitColor : theme.unselectedCommitColor;
+    console.log(fill);
     const strokeWidth = selected ? 3 : 1;
 
     return (
         <>
-            <circle id={hash} cx={position.x} cy={position.y} r={20} fill={fill} stroke='black' strokeWidth={strokeWidth} onClick={onClick} />
+            <circle id={hash} onClick={onClick} cx={position.x} cy={position.y} r={32} fill={fill} stroke='black' strokeWidth={strokeWidth} />
         </>
     );
 

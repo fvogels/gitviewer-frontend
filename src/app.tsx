@@ -1,12 +1,12 @@
 import { HeaderBox } from 'components/headerbox';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { createRoot } from 'react-dom/client';
-import styled from 'styled-components';
-import { Vector } from 'vector';
+import styled, { ThemeContext } from 'styled-components';
 import { WorkingAreaView } from 'components/working-area-view';
 import { StagingAreaView } from 'components/staging-area-view';
 import { SelectionContext } from 'selection-context';
 import { RepositoryView } from 'components/repository-view';
+import { DefaultTheme } from 'styled-components';
 
 
 const VerticalSplit = styled.div`
@@ -50,32 +50,50 @@ function PropertiesView() : JSX.Element
 }
 
 
+class Theme implements DefaultTheme
+{
+    selectedColor = '#5A5';
+
+    unselectedColor = '#555';
+
+    get selectedCommitColor() { return this.selectedColor; }
+
+    get unselectedCommitColor() { return this.unselectedColor; }
+
+    get selectedFileColor() { return this.selectedColor; }
+
+    get unselectedFileColor() { return this.unselectedColor; }
+}
+
+
 function App()
 {
   const [selectionId, setSelectionId] = React.useState<string>('');
   const [propertyView, setPropertyView] = React.useState<JSX.Element>(<></>);
 
   return (
-    <SelectionContext.Provider value={{selectionId, setSelection, propertyView}}>
-      <HorizontalSplit>
-        <WidthPanel width='70%'>
-          <VerticalSplit>
-            <HeightPanel height='50%'>
-              <RepositoryView />
-            </HeightPanel>
-            <HeightPanel height='25%'>
-              <StagingAreaView />
-            </HeightPanel>
-            <HeightPanel height='25%'>
-              <WorkingAreaView />
-            </HeightPanel>
-          </VerticalSplit>
-        </WidthPanel>
-        <WidthPanel width='30%'>
-          <PropertiesView />
-        </WidthPanel>
-      </HorizontalSplit>
-    </SelectionContext.Provider>
+    <ThemeContext.Provider value={new Theme()}>
+      <SelectionContext.Provider value={{selectionId, setSelection, propertyView}}>
+        <HorizontalSplit>
+          <WidthPanel width='70%'>
+            <VerticalSplit>
+              <HeightPanel height='50%'>
+                <RepositoryView />
+              </HeightPanel>
+              <HeightPanel height='25%'>
+                <StagingAreaView />
+              </HeightPanel>
+              <HeightPanel height='25%'>
+                <WorkingAreaView />
+              </HeightPanel>
+            </VerticalSplit>
+          </WidthPanel>
+          <WidthPanel width='30%'>
+            <PropertiesView />
+          </WidthPanel>
+        </HorizontalSplit>
+      </SelectionContext.Provider>
+    </ThemeContext.Provider>
   );
 
 

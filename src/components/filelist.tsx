@@ -14,7 +14,7 @@ const FileContainer = styled.span<{isSelected: boolean}>`
   font-family: monospace;
   padding: 0.25em;
   margin: 0.25em;
-  background: ${props => props.isSelected ? '#668' : '#448'};
+  background: ${props => props.isSelected ? props.theme.selectedFileColor : props.theme.unselectedFileColor};
   user-select: none;
 `;
 
