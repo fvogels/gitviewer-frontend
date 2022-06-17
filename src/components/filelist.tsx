@@ -15,6 +15,7 @@ const FileContainer = styled.span<{isSelected: boolean}>`
   padding: 0.25em;
   margin: 0.25em;
   background: ${props => props.isSelected ? '#668' : '#448'};
+  user-select: none;
 `;
 
 type FileProps = {
