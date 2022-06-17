@@ -12,7 +12,6 @@ type LabelProps = {
 const LabelText = styled.text`
     fill: white;
     font-weight: bold;
-    font-size: 16px;
     font-family: monospace;
     user-select: none;
 `;
@@ -24,7 +23,7 @@ export function Label({position, caption, dy} : LabelProps) : JSX.Element
     return (
         <>
             <rect x={position.x - theme.labelWidth / 2} y={position.y - theme.labelHeight - dy} width={theme.labelWidth} height={theme.labelHeight} fill={theme.branchLabelColor} />
-            <LabelText x={position.x} y={position.y} dy={-dy - 8} textAnchor="middle">{caption}</LabelText>
+            <LabelText x={position.x} y={position.y} dy={-dy - 6} textAnchor="middle">{caption}</LabelText>
         </>
     );
 }

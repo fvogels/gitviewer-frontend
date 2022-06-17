@@ -1,6 +1,6 @@
 import { HeaderBox } from 'components/headerbox';
 import React, { useEffect } from 'react';
-import styled, { ThemeContext } from 'styled-components';
+import styled, { DefaultTheme, ThemeContext } from 'styled-components';
 import { Vector } from 'vector';
 import { CommitView } from 'components/commit-view';
 import { Arrow } from 'components/arrow';
@@ -15,7 +15,7 @@ type Head = DetachedHead | AttachedHead;
 type RawData = {
     branches: { [key: string]: string },
     commits: { [key: string]: [string] },
-    head: Head,
+    HEAD: Head,
 }
 
 
@@ -134,7 +134,7 @@ function createCommitCircles(data: RawData, commitPositions: { [key: string]: Ve
 }
 
 
-function createCommitArrows(data: RawData, commitPositions: { [key: string]: Vector }, radius: number): JSX.Element[]
+function createCommitArrows(data: RawData, commitPositions: { [key: string]: Vector }, theme: DefaultTheme): JSX.Element[]
 {
     return Object.keys(data.commits).flatMap(childCommit => {
         const childPosition = commitPositions[childCommit];
@@ -145,7 +145,7 @@ function createCommitArrows(data: RawData, commitPositions: { [key: string]: Vec
 
             return (
                 <React.Fragment key={key}>
-                    {connect(childPosition, parentPosition, radius)}
+                    {connect(childPosition, parentPosition, theme.commitRadius)}
                 </React.Fragment>
             );
         });
@@ -165,6 +165,37 @@ function createCommitArrows(data: RawData, commitPositions: { [key: string]: Vec
 }
 
 
+function createLabels(data: RawData, commitPositions: { [key: string]: Vector }, theme: DefaultTheme): JSX.Element[]
+{
+    console.log(data);
+
+    const branchLabels = Object.entries(data.branches).map(([branch, hash]) => {
+        return (
+            <Label key={branch} position={commitPositions[hash]} caption={branch} dy={theme.commitRadius + 5} />
+        );
+    });
+
+    return [createHeadLabel(), ...branchLabels];
+
+
+    function createHeadLabel()
+    {
+        if ( data.HEAD.is_detached )
+        {
+            return (
+                <Label key="HEAD" position={commitPositions[data.HEAD.commit]} caption="HEAD" dy={theme.commitRadius + 5} />
+            );
+        }
+        else
+        {
+            return (
+                <Label key="HEAD" position={commitPositions[data.HEAD.commit]} caption="HEAD" dy={theme.commitRadius + 5 + theme.labelHeight + 5} />
+            );
+        }
+    }
+}
+
+
 export function RepositoryView(): JSX.Element
 {
     const theme = React.useContext(ThemeContext);
@@ -181,16 +212,10 @@ export function RepositoryView(): JSX.Element
     }, []);
 
     if (data) {
-
         const commitPositions: { [key: string]: Vector } = determineCommitPositions(data);
         const commitCircles = createCommitCircles(data, commitPositions);
-        const commitArrows = createCommitArrows(data, commitPositions, theme.commitRadius);
-
-        const labels = Object.entries(data.branches).map(([branch, hash]) => {
-            return (
-                <Label key={branch} position={commitPositions[hash]} caption={branch} dy={theme.commitRadius + 10} />
-            );
-        });
+        const commitArrows = createCommitArrows(data, commitPositions, theme);
+        const labels = createLabels(data, commitPositions, theme);
 
         return (
             <HeaderBox caption='Repository' captionLocation='west'>

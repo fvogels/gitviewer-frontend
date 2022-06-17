@@ -66,9 +66,9 @@ class Theme implements DefaultTheme
 
     commitRadius = 16;
 
-    labelWidth = 100;
+    labelWidth = 95;
 
-    labelHeight = 28;
+    labelHeight = 20;
 
     branchLabelColor = '#A44';
 }
