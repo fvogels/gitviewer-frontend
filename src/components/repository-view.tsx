@@ -51,7 +51,7 @@ class Grid<T>
 }
 
 
-function determinePositions(data: RawData): { [key: string]: Vector }
+function determineCommitPositions(data: RawData): { [key: string]: Vector }
 {
     const commits = data['commits'];
     const gridPositions : { [key: string] : Vector } = {};
@@ -137,7 +137,7 @@ export function RepositoryView(): JSX.Element
 
     if (data) {
 
-        const commitPositions: { [key: string]: Vector } = determinePositions(data);
+        const commitPositions: { [key: string]: Vector } = determineCommitPositions(data);
 
         const commitCircles = Object.keys(data.commits).map(commit => {
             if ( commit in commitPositions ) {
