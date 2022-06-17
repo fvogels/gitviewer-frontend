@@ -51,6 +51,18 @@ class Grid<T>
 }
 
 
+function* generateDeltas() : Iterable<Vector>
+{
+    let i = 0;
+    while ( i < 100 )
+    {
+        yield new Vector(0, i);
+        yield new Vector(0, -i);
+        i++;
+    }
+}
+
+
 function determineCommitPositions(data: RawData): { [key: string]: Vector }
 {
     const commits = data['commits'];
@@ -81,13 +93,7 @@ function determineCommitPositions(data: RawData): { [key: string]: Vector }
 
         if ( gridPositions[parent] )
         {
-            let position = gridPositions[parent].add(new Vector(1, 0));
-
-            while ( gridUsage.get(position, false) )
-            {
-                position = position.add(new Vector(0, 1));
-            }
-
+            const position = findFirstFree(gridPositions[parent].add(new Vector(1, 0)));
             gridPositions[current] = position;
             gridUsage.set(position, true);
             counter = 0;
@@ -112,6 +118,22 @@ function determineCommitPositions(data: RawData): { [key: string]: Vector }
     }
 
     return positions;
+
+
+    function findFirstFree(position: Vector) : Vector
+    {
+        for ( const delta of generateDeltas() )
+        {
+            const p  = position.add(delta);
+
+            if ( !gridUsage.get(p, false) )
+            {
+                return p;
+            }
+        }
+
+        throw new Error(`Couldn't find free position for ${current}`);
+    }
 }
 
 
