@@ -48,7 +48,6 @@ export function CommitView({ position, hash }: CommitProps): JSX.Element
     const mySelectionId = `commit:${hash}`;
     const selected = selectionId === mySelectionId;
     const fill = selected ? theme.selectedCommitColor : theme.unselectedCommitColor;
-    console.log(fill);
     const strokeWidth = selected ? 3 : 1;
 
     return (

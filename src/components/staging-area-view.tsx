@@ -11,7 +11,6 @@ function StagingAreaPropertyView(props: { pathParts: string[] }) : JSX.Element
     useEffect(() => {
         async function fetchData() {
             const url = `/api/v1/staging-area/${props.pathParts.join('/')}`;
-            console.log(url);
             const rawData = await fetch(url);
             const data = await rawData.json();
             setData(data);
