@@ -12,7 +12,6 @@ function CommitPropertyView(props: { hash: string }): JSX.Element
     useEffect(() => {
         async function fetchData() {
             const url = `/api/v1/repository/commits/${props.hash}`;
-            console.log(url);
             const rawData = await fetch(url);
             const data = await rawData.json();
             setData(data);
