@@ -63,6 +63,8 @@ class Theme implements DefaultTheme
     get selectedFileColor() { return this.selectedColor; }
 
     get unselectedFileColor() { return this.unselectedColor; }
+
+    commitRadius = 16;
 }
 
 

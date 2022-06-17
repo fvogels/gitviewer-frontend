@@ -52,7 +52,7 @@ export function CommitView({ position, hash }: CommitProps): JSX.Element
 
     return (
         <>
-            <circle id={hash} onClick={onClick} cx={position.x} cy={position.y} r={32} fill={fill} stroke='black' strokeWidth={strokeWidth} />
+            <circle id={hash} onClick={onClick} cx={position.x} cy={position.y} r={theme.commitRadius} fill={fill} stroke='black' strokeWidth={strokeWidth} />
         </>
     );
 

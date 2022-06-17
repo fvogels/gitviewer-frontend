@@ -1,8 +1,9 @@
 import { HeaderBox } from 'components/headerbox';
 import React, { useEffect } from 'react';
-import styled from 'styled-components';
+import styled, { ThemeContext } from 'styled-components';
 import { Vector } from 'vector';
 import { CommitView } from 'components/commit-view';
+import { Arrow } from 'components/arrow';
 
 
 
@@ -120,6 +121,7 @@ function determinePositions(data: RawData): { [key: string]: Vector }
 
 export function RepositoryView(): JSX.Element
 {
+    const theme = React.useContext(ThemeContext);
     const [data, setData] = React.useState<RawData | undefined>(undefined);
 
     useEffect(() => {
@@ -135,24 +137,50 @@ export function RepositoryView(): JSX.Element
     if (data) {
 
         const commitPositions: { [key: string]: Vector } = determinePositions(data);
+        const commitCircles = Object.keys(data.commits).map(commit => {
+            if ( commit in commitPositions ) {
+                return <CommitView key={commit} hash={commit} position={commitPositions[commit]} />
+            }
+            else
+            {
+                return <></>;
+            }
+        });
+        const commitArrows = Object.keys(data.commits).flatMap(childCommit => {
+            const childPosition = commitPositions[childCommit];
+
+            return data.commits[childCommit].map(parentCommit => {
+                const parentPosition = commitPositions[parentCommit];
+                const key=`${childCommit}:${parentCommit}`;
+
+                return (
+                    <React.Fragment key={key}>
+                        {connect(childPosition, parentPosition, theme.commitRadius)}
+                    </React.Fragment>
+                );
+            });
+        });
 
         return (
             <HeaderBox caption='Repository' captionLocation='west'>
                 <svg width="100%">
-                    {
-                        Object.keys(data.commits).map(commit => {
-                            if ( commit in commitPositions ) {
-                                return <CommitView key={commit} hash={commit} position={commitPositions[commit]} />
-                            }
-                            else
-                            {
-                                return <></>;
-                            }
-                        })
-                    }
+                    {commitCircles}
+                    {commitArrows}
                 </svg>
             </HeaderBox>
         );
+
+
+        function connect(from: Vector, to: Vector, radius: number) : JSX.Element
+        {
+            const correction = from.to(to).normalize().mul(radius);
+            const correctedFrom = from.add(correction);
+            const correctedTo = to.sub(correction);
+
+            return (
+                <Arrow from={correctedFrom} to={correctedTo} />
+            );
+        }
     }
     else {
         return <></>;

@@ -6,12 +6,14 @@ declare module 'styled-components'
 {
   export interface DefaultTheme
   {
-    selectedCommitColor : string;
+    selectedCommitColor: string;
 
-    unselectedCommitColor : string;
+    unselectedCommitColor: string;
 
-    selectedFileColor : string;
+    selectedFileColor: string;
 
-    unselectedFileColor : string;
+    unselectedFileColor: string;
+
+    commitRadius: number;
   }
 }
